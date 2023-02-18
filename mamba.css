@@ -3,6 +3,9 @@ body {
   overflow: hidden;
   font-family: 'Open Sans', sans-serif;
 }
+h1 {
+  color : darkgreen;
+}
 .loop-wrapper {
   margin: 0 auto;
   position: relative;
