@@ -12,12 +12,12 @@
 }
 
 :root {
-	--foreground: #F4F3EF;
-	--background: #070707;
-	--primary: #CBA135;
-	--secondary: #8C8C86;
-	--tertiary: #232220;
-	--quaternary: #101010;
+	--foreground: #F5F7FC;
+	--background: #060914;
+	--primary: #5C8DFF;
+	--secondary: #8A93B0;
+	--tertiary: #1B2236;
+	--quaternary: #0C1120;
 	--gutter: clamp(32px, 5vw, 64px);
 	--max-width: 1200px;
 }
@@ -51,18 +51,6 @@ a { color: inherit; }
 	padding: 0 var(--gutter);
 }
 
-/* Flow-field background */
-#line-field {
-	position: fixed;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 0;
-	pointer-events: none;
-	opacity: 0.7;
-}
-.site-header, main, .site-footer { position: relative; z-index: 1; }
-
 /* Cursor glow */
 .cursor-glow {
 	position: fixed;
@@ -75,8 +63,37 @@ a { color: inherit; }
 	border-radius: 50%;
 	pointer-events: none;
 	z-index: 0;
-	background: radial-gradient(circle, rgba(203,161,53,0.10) 0%, rgba(203,161,53,0) 70%);
+	background: radial-gradient(circle, rgba(92,141,255,0.14) 0%, rgba(92,141,255,0) 70%);
+	mix-blend-mode: screen;
+	will-change: transform, width, height, margin;
+	transition: width .5s cubic-bezier(.16,1,.3,1), height .5s cubic-bezier(.16,1,.3,1), margin .5s cubic-bezier(.16,1,.3,1), opacity .4s ease;
+}
+.cursor-glow.is-active {
+	width: 560px;
+	height: 560px;
+	margin-left: -280px;
+	margin-top: -280px;
+	background: radial-gradient(circle, rgba(92,141,255,0.22) 0%, rgba(92,141,255,0) 70%);
+}
+
+.cursor-dot {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 7px;
+	height: 7px;
+	margin-left: -3.5px;
+	margin-top: -3.5px;
+	border-radius: 50%;
+	background: var(--primary);
+	pointer-events: none;
+	z-index: 60;
 	will-change: transform;
+	transition: transform .18s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+}
+.cursor-dot.is-active {
+	transform: scale(2.4);
+	background: var(--foreground);
 }
 
 /* Reveal-on-scroll */
@@ -155,7 +172,7 @@ a { color: inherit; }
 	content: "";
 	position: absolute;
 	inset: 0;
-	background: radial-gradient(60% 50% at 50% 0%, rgba(203,161,53,0.08) 0%, rgba(7,7,7,0) 70%);
+	background: radial-gradient(60% 50% at 50% 0%, rgba(92,141,255,0.12) 0%, rgba(6,9,20,0) 70%);
 	pointer-events: none;
 	z-index: -1;
 }
@@ -167,7 +184,7 @@ a { color: inherit; }
 	font-weight: 700;
 }
 .accent-word {
-	background: linear-gradient(95deg, var(--primary), #efe2b0 50%, var(--primary));
+	background: linear-gradient(95deg, var(--primary), #C9D6FF 50%, var(--primary));
 	-webkit-background-clip: text;
 	background-clip: text;
 	color: transparent;
@@ -218,7 +235,7 @@ a { color: inherit; }
 .btn-primary { background: var(--primary); color: var(--background); }
 .btn-outline { border: 1px solid var(--foreground); color: var(--foreground); }
 .magnetic { display: inline-block; transition: transform .2s ease-out; }
-.magnetic .btn:hover { box-shadow: 0 0 0 1px var(--primary), 0 12px 30px -8px rgba(203,161,53,.45); transform: translateY(-2px); }
+.magnetic .btn:hover { box-shadow: 0 0 0 1px var(--primary), 0 12px 30px -8px rgba(92,141,255,.45); transform: translateY(-2px); }
 
 /* Sections */
 .site-section { padding: clamp(64px, 9vw, 120px) 0; border-top: 1px solid var(--tertiary); }
@@ -228,7 +245,8 @@ h2.section-title { font-size: clamp(30px, 4vw, 48px); letter-spacing: -0.02em; m
 /* About */
 .about-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 4rem; align-items: start; }
 .about-grid p.lead { color: var(--secondary); font-size: clamp(17px, 1.2vw, 21px); }
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem 2rem; align-content: start; }
+.stats-grid > div:nth-child(3) { grid-column: 1 / -1; }
 .stat-number { font-size: clamp(36px, 4.5vw, 56px); font-weight: 700; letter-spacing: -0.02em; display: block; }
 .stat-label { color: var(--secondary); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
 @media (max-width: 800px) { .about-grid { grid-template-columns: 1fr; } }
@@ -269,7 +287,7 @@ h2.section-title { font-size: clamp(30px, 4vw, 48px); letter-spacing: -0.02em; m
 	height: 9px;
 	border-radius: 50%;
 	background: var(--primary);
-	box-shadow: 0 0 0 4px var(--background), 0 0 16px 2px rgba(203,161,53,.6);
+	box-shadow: 0 0 0 4px var(--background), 0 0 16px 2px rgba(92,141,255,.6);
 }
 .timeline-date { color: var(--primary); font-size: 13px; text-transform: uppercase; letter-spacing: .12em; margin: 0 0 .4em; }
 .timeline-item h3 { margin: 0 0 .5em; font-size: 20px; }
