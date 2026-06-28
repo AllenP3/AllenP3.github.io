@@ -44,15 +44,20 @@
 		} );
 	}
 
-	/* Cursor glow that follows the pointer */
+	/* Cursor glow + precise dot that follow the pointer */
 	if ( ! prefersReducedMotion && window.matchMedia( '(pointer: fine)' ).matches ) {
 		var glow = document.createElement( 'div' );
 		glow.className = 'cursor-glow';
 		document.body.appendChild( glow );
+		var dot = document.createElement( 'div' );
+		dot.className = 'cursor-dot';
+		document.body.appendChild( dot );
+
 		var gx = 0, gy = 0, cx = 0, cy = 0;
 		document.addEventListener( 'mousemove', function ( e ) {
 			gx = e.clientX;
 			gy = e.clientY;
+			dot.style.transform = 'translate(' + gx + 'px,' + gy + 'px)';
 		} );
 		function loop() {
 			cx += ( gx - cx ) * 0.12;
@@ -61,6 +66,18 @@
 			requestAnimationFrame( loop );
 		}
 		loop();
+
+		var hoverTargets = document.querySelectorAll( 'a, button, .btn, .skill-tag, .project-card, .skill-group' );
+		hoverTargets.forEach( function ( el ) {
+			el.addEventListener( 'mouseenter', function () {
+				glow.classList.add( 'is-active' );
+				dot.classList.add( 'is-active' );
+			} );
+			el.addEventListener( 'mouseleave', function () {
+				glow.classList.remove( 'is-active' );
+				dot.classList.remove( 'is-active' );
+			} );
+		} );
 	}
 
 	/* Animated counters */
