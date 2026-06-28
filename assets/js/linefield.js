@@ -7,11 +7,11 @@
 
 	var prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
-	var dpr = Math.min( window.devicePixelRatio || 1, 2 );
+	var dpr = 1;
 	var width = 0, height = 0;
 	var lines = [];
-	var lineCount = 90;
-	var sampleStep = 7;
+	var lineCount = 42;
+	var sampleStep = 16;
 
 	var mouseX = -9999, mouseY = -9999;
 	var targetX = -9999, targetY = -9999;
@@ -35,7 +35,11 @@
 		}
 	}
 
-	window.addEventListener( 'resize', resize );
+	var resizeTimer;
+	window.addEventListener( 'resize', function () {
+		clearTimeout( resizeTimer );
+		resizeTimer = setTimeout( resize, 150 );
+	} );
 	window.addEventListener( 'mousemove', function ( e ) {
 		targetX = e.clientX;
 		targetY = e.clientY;
@@ -53,6 +57,7 @@
 
 	var t = 0;
 	var radius = 240;
+	var radiusSq = radius * radius;
 
 	function frame() {
 		t += 0.0032;
@@ -61,31 +66,35 @@
 
 		ctx.clearRect( 0, 0, width, height );
 		ctx.lineWidth = 1;
+		ctx.strokeStyle = 'rgba(92,141,255,0.14)';
+		ctx.beginPath();
 
 		for ( var i = 0; i < lines.length; i++ ) {
 			var line = lines[ i ];
-			ctx.beginPath();
+			var mouseNear = Math.abs( line.baseX - mouseX ) < radius + 80;
 			for ( var y = -sampleStep; y <= height + sampleStep; y += sampleStep ) {
 				var wobble = Math.sin( y * 0.012 + t * 1.4 + line.seed ) * 16
 					+ Math.sin( y * 0.0035 - t * 0.6 + line.seed * 0.6 ) * 34;
 				var x = line.baseX + wobble;
 
-				var dx = x - mouseX;
-				var dy = y - mouseY;
-				var dist = Math.sqrt( dx * dx + dy * dy );
-				if ( dist < radius ) {
-					var force = 1 - dist / radius;
-					force = force * force;
-					var nx = dist > 0.001 ? dx / dist : 0;
-					x += nx * force * 70;
+				if ( mouseNear ) {
+					var dx = x - mouseX;
+					var dy = y - mouseY;
+					var distSq = dx * dx + dy * dy;
+					if ( distSq < radiusSq ) {
+						var dist = Math.sqrt( distSq );
+						var force = 1 - dist / radius;
+						force = force * force;
+						var nx = dist > 0.001 ? dx / dist : 0;
+						x += nx * force * 70;
+					}
 				}
 
 				if ( y === -sampleStep ) ctx.moveTo( x, y );
 				else ctx.lineTo( x, y );
 			}
-			ctx.strokeStyle = 'rgba(92,141,255,0.14)';
-			ctx.stroke();
 		}
+		ctx.stroke();
 
 		if ( ! prefersReducedMotion ) requestAnimationFrame( frame );
 	}
